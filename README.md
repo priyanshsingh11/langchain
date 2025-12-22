@@ -26,12 +26,14 @@ LangChain is mainly built from the following components:
 - **Models**
 - **Prompts**
 - **Chains**
+- **Runnables**
 - **Output Parsers**
 - **Memory**
 - **Tools**
 - **Agents** (advanced)
 
-You usually start with **Models → Prompts → Chains → Parsers**.
+You usually start with:  
+**Models → Prompts → Chains / Runnables → Parsers**
 
 ---
 
@@ -113,6 +115,34 @@ Why chains matter:
 
 ---
 
+## Runnables
+
+**Runnables are the modern and more flexible way to build workflows in LangChain.**
+
+A runnable is:
+> **Any component that takes input and produces output**
+
+Examples of runnables:
+- Prompt templates
+- Models
+- Parsers
+- Custom Python functions
+
+Key ideas:
+- Runnables can be **composed**
+- They can be **chained using `|` operator**
+- They replace many older chain patterns
+
+Why runnables matter:
+- More modular than chains
+- Easier to debug
+- Better for complex workflows
+
+**Important:**  
+Runnables are now the **recommended approach** in newer LangChain versions.
+
+---
+
 ## Output Parsers
 
 LLMs return **unstructured text**.  
@@ -180,7 +210,7 @@ Agents are powerful but:
 - More expensive
 - Not always needed
 
-**Start with chains before agents.**
+**Start with chains or runnables before agents.**
 
 ---
 
@@ -203,6 +233,7 @@ Do NOT use LangChain when:
 - Models generate text
 - Prompts guide behavior
 - Chains define workflow
+- Runnables provide flexible composition
 - Temperature controls randomness
 - Parsers structure output
 - Memory handles context
