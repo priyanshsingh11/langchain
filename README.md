@@ -1,6 +1,6 @@
 # LangChain – Core Concepts & Revision Notes
 
-This repository contains **revision notes and practice code for LangChain**.
+This repository contains **revision notes and practice code for LangChain**.  
 The focus is on **understanding concepts clearly**, not building complex systems.
 
 ---
@@ -31,9 +31,10 @@ LangChain is mainly built from the following components:
 - **Memory**
 - **Tools**
 - **Agents** (advanced)
+- **RAG (Retrieval-Augmented Generation)**
 
 You usually start with:  
-**Models → Prompts → Chains / Runnables → Parsers**
+**Models → Prompts → Runnables → Parsers**
 
 ---
 
@@ -60,21 +61,20 @@ You control:
 
 ---
 
-## Temperature (temp)
+## Temperature
 
 **Temperature controls randomness of output.**
 
-- `temp = 0.0` → Very deterministic, factual
-- `temp = 0.7` → Balanced responses
-- `temp = 1.0+` → Creative, more randomness
+- `0.0` → Deterministic, factual
+- `0.7` → Balanced
+- `1.0+` → Creative, random
 
 Use cases:
-- Low temp → QA systems, factual answers
-- Medium temp → Chatbots
-- High temp → Creative writing
+- Low → QA systems
+- Medium → Chatbots
+- High → Creative writing
 
-**Important:**  
-Lower temperature = more reliable output
+Lower temperature = more reliable output.
 
 ---
 
@@ -82,214 +82,130 @@ Lower temperature = more reliable output
 
 Prompts define **what you ask the model**.
 
-LangChain allows:
+LangChain supports:
 - Prompt templates
 - Variable injection
 - Structured prompts
 
-Example idea:
-- Input variables → formatted prompt → model
-
-Prompts are **critical** because LLMs respond based on instructions.
+Prompts are critical because **LLMs strictly follow instructions**.
 
 ---
 
 ## Chains
 
-**Chains are the backbone of LangChain.**
+**Chains define workflow logic.**
 
 A chain is:
 > **Prompt → Model → Output**
 
-Types:
-- Simple chain (single step)
-- Sequential chain (multiple steps)
-- Custom chains
+Chains:
+- Connect multiple steps
+- Define execution order
+- Enable reuse
 
-Why chains matter:
-- They define **workflow**
-- They make logic reusable
-- They connect multiple operations
-
-**Without chains, LangChain has no flow.**
+Modern LangChain prefers **runnables over old chain abstractions**.
 
 ---
 
-## Runnables – Types & Patterns (Important)
+## Runnables – Core Execution Model
 
-Runnables are the **core execution units** in modern LangChain.  
-They define **how data flows** through prompts, models, parsers, and functions.
+Runnables are the **fundamental building blocks** in modern LangChain.
 
 A runnable:
 > **Takes input → processes it → returns output**
 
-LangChain provides multiple **runnable patterns** depending on the workflow.
+They allow:
+- Sequential flows
+- Parallel execution
+- Conditional routing
+- Mixing Python logic with LLMs
 
 ---
 
-## 1. Simple / Sequential Runnables
+## 1. Sequential Runnables (`|` Operator)
 
-This is the **most basic runnable pattern**.
+Sequential execution using the pipe operator:
 
-Flow:
-> **Input → Step 1 → Step 2 → Output**
-
-Example idea:
-- Prompt → Model → Output Parser
 
 Key points:
-- Executes **step by step**
-- Output of one step becomes input of the next
-- Easy to understand and debug
-
-Use cases:
-- Single-task pipelines
-- Prompt → LLM → structured output
-- Learning and prototyping
-
-This is similar to a traditional chain but **more flexible**.
-
----
-
-## 2. Runnable Sequence (`|` Operator)
-
-LangChain allows chaining runnables using the pipe (`|`) operator.
-
-Concept:
-> **Runnable A | Runnable B | Runnable C**
-
-Why this matters:
+- Output of one step feeds into the next
 - Clean and readable
-- Highly modular
-- Replaces many older `Chain` patterns
+- Recommended default approach
 
-Each component:
-- Receives input
-- Produces output
-- Automatically passes it forward
-
-This is the **recommended default approach** in modern LangChain.
+Internally equivalent to `RunnableSequence`.
 
 ---
 
-## 3. Parallel Runnables
+## 2. Parallel Runnables
 
-Parallel runnables allow **multiple operations to execute simultaneously**.
+Parallel runnables execute **multiple tasks at the same time**.
 
 Concept:
-> **Same input → Multiple runnables → Combined output**
-
-Example idea:
-- One runnable summarizes text
-- Another extracts keywords
-- Both run at the same time
+> Same input → multiple runnables → combined output
 
 Key points:
 - Faster execution
-- Tasks are independent
+- Independent tasks
 - Output is usually a dictionary
 
 Use cases:
-- Feature extraction
+- Summarization + keyword extraction
 - Multi-view analysis
-- Running independent LLM calls
 
 ---
 
-## 4. Runnable Map (Fan-Out Pattern)
+## 3. Runnable Map (Fan-Out)
 
-Runnable maps apply **different runnables to different parts of the input**.
+Runnable maps apply different runnables to different input fields.
 
 Concept:
-> **Structured input → Multiple transformations → Structured output**
-
-Example idea:
-- `text` → summarization
-- `review` → sentiment analysis
-
-Key points:
-- Input is usually a dictionary
-- Each key is processed independently
-- Output preserves structure
+> Structured input → multiple transformations → structured output
 
 Use cases:
 - Document pipelines
 - Multi-field processing
-- Data preprocessing before LLM calls
 
 ---
 
-## 5. Runnable Lambda (Custom Logic)
+## 4. Runnable Lambda
 
-Runnable Lambda allows you to use **custom Python functions** inside a runnable pipeline.
-
-Concept:
-> **Input → Python logic → Output**
-
-Key points:
-- No LLM involved
-- Used for transformation, validation, formatting
-- Lightweight and fast
+Runnable Lambda allows **custom Python logic** inside pipelines.
 
 Use cases:
-- Cleaning input
-- Post-processing LLM output
-- Adding business rules
+- Data cleaning
+- Validation
+- Formatting
+- Business rules
 
-Runnable Lambdas are often used **between LLM calls**.
+No LLM is required here.
 
 ---
 
-## 6. Runnable Branch (Conditional Execution)
+## 5. Runnable Branch
 
-Runnable Branch allows **conditional routing** based on input.
+Runnable Branch enables **conditional execution**.
 
 Concept:
-> **If condition → Runnable A  
-Else → Runnable B**
-
-Key points:
-- Enables decision-making
-- Similar to if-else logic
-- Keeps workflows clean
+> If condition → Runnable A  
+> Else → Runnable B
 
 Use cases:
-- Different prompts for different inputs
-- Routing based on user intent
-- Error handling paths
+- Intent-based routing
+- Error handling
+- Different prompts per input type
 
 ---
 
-## 7. Runnable Passthrough
+## 6. Runnable Passthrough
 
-Runnable Passthrough simply **forwards input without changes**.
-
-Concept:
-> **Input → Same input**
-
-Why it exists:
-- Useful in parallel or branching workflows
-- Helps preserve original data
+Runnable Passthrough forwards input **without modification**.
 
 Use cases:
-- Keeping raw input alongside processed output
+- Preserving raw input
+- Combining original and processed data
 - Debugging pipelines
 
 ---
-
-## Key Takeaways (Revision)
-
-- Runnables are **building blocks**, not just chains
-- They support **sequential, parallel, and conditional flows**
-- `|` operator is the standard way to compose logic
-- Prefer runnables over old chain abstractions
-- Combine LLMs + Python logic cleanly using runnables
-
----
-
-**Tip:**  
-Start simple → Sequential → Parallel → Conditional  
-Do not jump to agents unless required.
 
 ## Output Parsers
 
@@ -297,58 +213,51 @@ LLMs return **unstructured text**.
 Output parsers convert it into **structured data**.
 
 Examples:
-- JSON parser
 - String parser
-- Custom format parser
+- JSON parser
+- Custom parsers
 
-Why parsers are important:
-- Used in production systems
+Parsers:
 - Reduce hallucination
-- Make outputs machine-readable
-
-**Always use parsers when structure matters.**
+- Improve reliability
+- Are critical for production systems
 
 ---
 
 ## Memory
 
-Memory allows the system to **remember past interactions**.
+Memory allows systems to **retain context across interactions**.
 
 Examples:
 - Conversation history
 - Session memory
 
-Use cases:
+Used in:
 - Chatbots
 - Assistants
-- Multi-turn conversations
+- Multi-turn workflows
 
-Without memory:
-- Each request is independent
+Without memory, every request is independent.
 
 ---
 
 ## Tools
 
-Tools allow LLMs to:
-- Call APIs
-- Run functions
-- Access external systems
+Tools allow LLMs to **interact with the external world**.
 
 Examples:
-- Search tools
-- Database queries
-- Custom Python functions
+- APIs
+- Databases
+- Python functions
+- Search systems
 
-Tools extend LLM capability beyond text.
+Tools extend LLM capability beyond text generation.
 
 ---
 
 ## Agents (Advanced)
 
-Agents decide **which action to take next**.
-
-They can:
+Agents can:
 - Choose tools
 - Plan steps
 - Execute reasoning loops
@@ -356,9 +265,140 @@ They can:
 Agents are powerful but:
 - Harder to control
 - More expensive
-- Not always needed
+- Often unnecessary
 
-**Start with chains or runnables before agents.**
+**Always start with runnables before agents.**
+
+---
+
+## Retrieval-Augmented Generation (RAG)
+
+**RAG (Retrieval-Augmented Generation)** combines LLMs with **external knowledge sources**.
+
+In simple terms:
+> **LLM + Your Data = RAG**
+
+LangChain is commonly used to build RAG systems.
+
+---
+
+## Why RAG is Needed
+
+LLMs:
+- Don’t know private data
+- Have knowledge cutoffs
+- Can hallucinate
+
+RAG solves this by:
+- Retrieving relevant documents
+- Injecting them into the prompt
+- Generating grounded answers
+
+---
+
+## High-Level RAG Flow
+
+
+---
+
+## Core Components of RAG in LangChain
+
+- **Document Loaders**
+- **Text Splitters**
+- **Embeddings**
+- **Vector Stores**
+- **Retrievers**
+- **LLMs**
+
+LangChain orchestrates all these components.
+
+---
+
+## Document Loaders
+
+Load external data such as:
+- PDFs
+- Text files
+- Web pages
+- Databases
+
+They convert raw data into structured `Document` objects.
+
+---
+
+## Text Splitters
+
+Large documents are split into smaller chunks.
+
+Why:
+- Context window limits
+- Better retrieval accuracy
+
+Chunk size and overlap impact performance.
+
+---
+
+## Embeddings
+
+Embeddings convert text into vectors.
+
+Key idea:
+> Similar meaning → similar vectors
+
+Used for:
+- Semantic search
+- Similarity matching
+
+Embeddings do **not generate text**.
+
+---
+
+## Vector Stores
+
+Vector stores store embeddings and enable fast similarity search.
+
+Examples:
+- FAISS
+- Chroma
+- Pinecone
+
+They power the retrieval step in RAG.
+
+---
+
+## Retrievers
+
+Retrievers fetch the **most relevant document chunks**.
+
+Flow:
+> Query → embedding → similarity search → top-k documents
+
+They abstract away vector store logic.
+
+---
+
+## Augmentation (Context Injection)
+
+Retrieved documents are injected into the prompt.
+
+The LLM:
+- Does not memorize data
+- Uses provided context to answer
+
+This is the core of RAG.
+
+---
+
+## RAG vs Fine-Tuning
+
+| RAG | Fine-Tuning |
+|----|------------|
+| Uses external data | Modifies model weights |
+| Easy to update | Expensive |
+| Dynamic | Static |
+| Safer for private data | Risky for sensitive data |
+
+LangChain primarily focuses on **RAG**, not fine-tuning.
 
 ---
 
@@ -368,24 +408,22 @@ Use LangChain when:
 - You need multi-step LLM logic
 - You want structured outputs
 - You are building AI workflows
+- You need RAG pipelines
 
 Do NOT use LangChain when:
 - A single API call is enough
-- Logic is very simple
+- Logic is extremely simple
 
 ---
 
-## Summary (Very Important)
+## Key Takeaways
 
-- LangChain orchestrates LLMs
-- Models generate text
-- Prompts guide behavior
-- Chains define workflow
-- Runnables provide flexible composition
-- Temperature controls randomness
-- Parsers structure output
-- Memory handles context
+- LangChain orchestrates LLM workflows
+- Runnables are the core abstraction
+- `|` operator is the standard composition method
+- RAG enables LLMs to use private data
 - Agents are optional and advanced
+- Start simple, scale only when needed
 
 ---
 
