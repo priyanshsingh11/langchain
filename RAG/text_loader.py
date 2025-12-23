@@ -23,6 +23,7 @@ print(type(docs))
 
 print(len(docs))
 
+# we write the docs[0] to see the content of the data
 print(docs[0].page_content)
 
 print(docs[0].metadata)
