@@ -115,33 +115,181 @@ Why chains matter:
 
 ---
 
-## Runnables
+## Runnables – Types & Patterns (Important)
 
-**Runnables are the modern and more flexible way to build workflows in LangChain.**
+Runnables are the **core execution units** in modern LangChain.  
+They define **how data flows** through prompts, models, parsers, and functions.
 
-A runnable is:
-> **Any component that takes input and produces output**
+A runnable:
+> **Takes input → processes it → returns output**
 
-Examples of runnables:
-- Prompt templates
-- Models
-- Parsers
-- Custom Python functions
-
-Key ideas:
-- Runnables can be **composed**
-- They can be **chained using `|` operator**
-- They replace many older chain patterns
-
-Why runnables matter:
-- More modular than chains
-- Easier to debug
-- Better for complex workflows
-
-**Important:**  
-Runnables are now the **recommended approach** in newer LangChain versions.
+LangChain provides multiple **runnable patterns** depending on the workflow.
 
 ---
+
+## 1. Simple / Sequential Runnables
+
+This is the **most basic runnable pattern**.
+
+Flow:
+> **Input → Step 1 → Step 2 → Output**
+
+Example idea:
+- Prompt → Model → Output Parser
+
+Key points:
+- Executes **step by step**
+- Output of one step becomes input of the next
+- Easy to understand and debug
+
+Use cases:
+- Single-task pipelines
+- Prompt → LLM → structured output
+- Learning and prototyping
+
+This is similar to a traditional chain but **more flexible**.
+
+---
+
+## 2. Runnable Sequence (`|` Operator)
+
+LangChain allows chaining runnables using the pipe (`|`) operator.
+
+Concept:
+> **Runnable A | Runnable B | Runnable C**
+
+Why this matters:
+- Clean and readable
+- Highly modular
+- Replaces many older `Chain` patterns
+
+Each component:
+- Receives input
+- Produces output
+- Automatically passes it forward
+
+This is the **recommended default approach** in modern LangChain.
+
+---
+
+## 3. Parallel Runnables
+
+Parallel runnables allow **multiple operations to execute simultaneously**.
+
+Concept:
+> **Same input → Multiple runnables → Combined output**
+
+Example idea:
+- One runnable summarizes text
+- Another extracts keywords
+- Both run at the same time
+
+Key points:
+- Faster execution
+- Tasks are independent
+- Output is usually a dictionary
+
+Use cases:
+- Feature extraction
+- Multi-view analysis
+- Running independent LLM calls
+
+---
+
+## 4. Runnable Map (Fan-Out Pattern)
+
+Runnable maps apply **different runnables to different parts of the input**.
+
+Concept:
+> **Structured input → Multiple transformations → Structured output**
+
+Example idea:
+- `text` → summarization
+- `review` → sentiment analysis
+
+Key points:
+- Input is usually a dictionary
+- Each key is processed independently
+- Output preserves structure
+
+Use cases:
+- Document pipelines
+- Multi-field processing
+- Data preprocessing before LLM calls
+
+---
+
+## 5. Runnable Lambda (Custom Logic)
+
+Runnable Lambda allows you to use **custom Python functions** inside a runnable pipeline.
+
+Concept:
+> **Input → Python logic → Output**
+
+Key points:
+- No LLM involved
+- Used for transformation, validation, formatting
+- Lightweight and fast
+
+Use cases:
+- Cleaning input
+- Post-processing LLM output
+- Adding business rules
+
+Runnable Lambdas are often used **between LLM calls**.
+
+---
+
+## 6. Runnable Branch (Conditional Execution)
+
+Runnable Branch allows **conditional routing** based on input.
+
+Concept:
+> **If condition → Runnable A  
+Else → Runnable B**
+
+Key points:
+- Enables decision-making
+- Similar to if-else logic
+- Keeps workflows clean
+
+Use cases:
+- Different prompts for different inputs
+- Routing based on user intent
+- Error handling paths
+
+---
+
+## 7. Runnable Passthrough
+
+Runnable Passthrough simply **forwards input without changes**.
+
+Concept:
+> **Input → Same input**
+
+Why it exists:
+- Useful in parallel or branching workflows
+- Helps preserve original data
+
+Use cases:
+- Keeping raw input alongside processed output
+- Debugging pipelines
+
+---
+
+## Key Takeaways (Revision)
+
+- Runnables are **building blocks**, not just chains
+- They support **sequential, parallel, and conditional flows**
+- `|` operator is the standard way to compose logic
+- Prefer runnables over old chain abstractions
+- Combine LLMs + Python logic cleanly using runnables
+
+---
+
+**Tip:**  
+Start simple → Sequential → Parallel → Conditional  
+Do not jump to agents unless required.
 
 ## Output Parsers
 
