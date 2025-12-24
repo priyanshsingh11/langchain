@@ -312,15 +312,110 @@ Document loaders bring **external data into LangChain**.
 
 ---
 
-## 14. Text Splitters
+## 14. Text Splitters (VERY IMPORTANT)
 
-Split large documents into **smaller chunks**.
+Text splitters divide large documents into **smaller, manageable chunks** before embedding.
 
-**Why Needed**
-- LLM context window limits
-- Better semantic retrieval
+> **Good splitting = good retrieval = good RAG answers**
 
-Chunk size and overlap directly impact RAG quality.
+---
+
+### 14.1 Why Text Splitters Are Needed
+
+- LLMs have **context window limits**
+- Vector search works better on **focused chunks**
+- Large documents reduce retrieval accuracy
+
+Without splitting:
+- Poor similarity search
+- Higher hallucination
+- Context overflow errors
+
+---
+
+### 14.2 What a Text Splitter Does
+
+A text splitter:
+- Breaks documents into chunks
+- Preserves semantic meaning
+- Optionally adds overlap between chunks
+
+**Output:**
+
+Each chunk is embedded separately.
+
+---
+
+### 14.3 Common Text Splitter Types in LangChain
+
+#### 1. Character Text Splitter
+- Splits based on fixed character count
+- Simple but less semantic
+
+**Use Case:** Small, clean text
+
+---
+
+#### 2. Recursive Character Text Splitter (Most Used)
+- Tries to split by:
+  - Paragraphs
+  - Sentences
+  - Words
+  - Characters (last fallback)
+
+**Why Best**
+- Preserves meaning
+- Produces high-quality chunks
+
+> **Recommended default splitter for RAG**
+
+---
+
+#### 3. Token Text Splitter
+- Splits based on token count
+- Model-aware
+
+**Use Case:** Strict token limits (GPT models)
+
+---
+
+#### 4. Markdown / Code Splitters
+- Split based on headers or syntax
+
+**Use Case:** Documentation, README, codebases
+
+---
+
+### 14.4 Chunk Size and Overlap
+
+- **Chunk Size:** Number of characters/tokens per chunk
+- **Chunk Overlap:** Shared content between chunks
+
+**Why Overlap Matters**
+- Prevents loss of context at boundaries
+- Improves answer continuity
+
+**Typical Values**
+- Chunk size: `500–1000`
+- Overlap: `50–200`
+
+---
+
+### 14.5 Text Splitter Best Practices
+
+- Use **recursive splitter** by default
+- Tune chunk size per document type
+- Increase overlap for:
+  - Legal
+  - Technical
+  - Research documents
+- Smaller chunks ≠ always better
+
+---
+
+### 14.6 Interview Tip
+
+> **Bad RAG answers are often caused by bad text splitting, not bad LLMs.**
 
 ---
 
@@ -349,9 +444,9 @@ This distinction is **commonly asked in interviews**.
 
 A **Vector Store** is a **storage + search layer** for embeddings.
 
-It provides:
+Provides:
 - Vector storage
-- Similarity search (cosine, dot product, etc.)
+- Similarity search
 - Basic metadata filtering
 
 **Examples**
@@ -359,26 +454,22 @@ It provides:
 - Chroma
 - Annoy
 
-**Key Characteristics**
-- Lightweight
-- Often runs locally
-- No user management
-- No distributed scaling
-
-> Vector stores are ideal for **local, small-to-medium RAG systems**.
+Best for:
+- Local development
+- Prototypes
+- Learning
 
 ---
 
 ### 16.2 What is a Vector Database?
 
-A **Vector Database** is a **production-grade system** built around vector storage.
+A **Vector Database** is a **production-grade system**.
 
-In addition to vector search, it provides:
+Provides:
 - Horizontal scaling
 - High availability
-- Authentication & access control
-- Index management
-- Monitoring and backups
+- Authentication
+- Monitoring
 
 **Examples**
 - Pinecone
@@ -386,98 +477,43 @@ In addition to vector search, it provides:
 - Milvus
 - Qdrant
 
-> Vector databases are designed for **enterprise and production workloads**.
+Best for:
+- Enterprise RAG systems
 
 ---
 
-### 16.3 Vector Store vs Vector Database (Comparison)
+### 16.3 Comparison
 
 | Feature | Vector Store | Vector Database |
 |------|-------------|----------------|
-| Purpose | Simple similarity search | Enterprise-scale vector search |
-| Deployment | Local / embedded | Cloud / distributed |
-| Scaling | Limited | Horizontal scaling |
-| Security | Minimal | Authentication & RBAC |
-| Monitoring | No | Yes |
-| Use Case | Learning, prototypes | Production RAG systems |
+| Scaling | Limited | Horizontal |
+| Security | Minimal | RBAC |
+| Deployment | Local | Cloud |
+| Use Case | Learning | Production |
 
 ---
 
-### 16.4 How LangChain Uses Them
+### 16.4 LangChain Abstraction
 
-LangChain:
-- Treats both **vector stores and vector databases the same**
-- Interacts via a **common abstraction**
-- Allows easy swapping without changing pipeline logic
-
-> This abstraction is one of LangChain’s biggest strengths.
+LangChain uses a **common interface** for both, enabling easy swapping.
 
 ---
 
 ## 17. Retrievers
 
-Retrievers fetch the **most relevant document chunks**.
-
-**Flow**
+Retrievers fetch the **most relevant chunks** from vector storage.
 
 They:
-- Wrap vector store logic
 - Control search strategy
 - Improve relevance
+- Abstract vector store logic
 
 ---
 
 ## 18. Augmentation (Context Injection)
 
-Retrieved documents are injected into the prompt.
+Retrieved chunks are injected into the prompt.
 
-The LLM:
+LLM:
 - Does not memorize data
-- Uses provided context only
-
-> This step grounds the response and reduces hallucination.
-
----
-
-## 19. RAG vs Fine-Tuning
-
-| RAG | Fine-Tuning |
-|----|------------|
-| Uses external data | Modifies model weights |
-| Easy to update | Expensive |
-| Dynamic | Static |
-| Safer for private data | Risky for sensitive data |
-
-> LangChain primarily focuses on **RAG**, not fine-tuning.
-
----
-
-## 20. When to Use LangChain
-
-### Use LangChain when:
-- You need multi-step LLM workflows
-- You want structured outputs
-- You are building RAG systems
-- You need orchestration logic
-
-### Do NOT use LangChain when:
-- A single API call is enough
-- Logic is extremely simple
-
----
-
-## 21. Key Takeaways
-
-- LangChain orchestrates LLM workflows
-- Runnables are the core abstraction
-- `|` operator is the standard composition method
-- RAG enables LLMs to use private data
-- Vector stores are for local use
-- Vector databases are for production
-- Agents are optional and advanced
-
----
-
-## 22. Status
-
-Learning and revision in progress.
+- A
