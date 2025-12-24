@@ -1,7 +1,7 @@
 # LangChain – Core Concepts & Revision Notes
 
 This repository contains **revision notes and practice code for LangChain**.  
-The focus is on **understanding concepts clearly**, not building complex systems.
+The focus is on **clear conceptual understanding**, not building complex or production-heavy systems.
 
 ---
 
@@ -126,8 +126,6 @@ They allow:
 
 Sequential execution using the pipe operator.
 
-**Concept:**
-
 **Key Points**
 - Output of one step feeds into the next
 - Clean and readable
@@ -140,9 +138,6 @@ Sequential execution using the pipe operator.
 
 Parallel runnables execute **multiple tasks at the same time**.
 
-**Concept:**
-> Same input → multiple runnables → combined output
-
 **Use Cases**
 - Summarization + keyword extraction
 - Multi-view analysis
@@ -152,9 +147,6 @@ Parallel runnables execute **multiple tasks at the same time**.
 ### 7.3 Runnable Map (Fan-Out)
 
 Applies different runnables to different input fields.
-
-**Concept:**
-> Structured input → multiple transformations → structured output
 
 **Use Cases**
 - Document pipelines
@@ -179,8 +171,6 @@ Allows **custom Python logic** inside pipelines.
 ### 7.5 Runnable Branch
 
 Enables **conditional execution**.
-
-**Concept:**
 
 **Use Cases**
 - Intent-based routing
@@ -299,7 +289,7 @@ RAG solves this by:
 - **Document Loaders**
 - **Text Splitters**
 - **Embeddings**
-- **Vector Stores**
+- **Vector Stores / Vector Databases**
 - **Retrievers**
 - **LLMs**
 
@@ -307,34 +297,34 @@ LangChain orchestrates all these components.
 
 ---
 
-### 12.4 Document Loaders (Very Important)
+## 13. Document Loaders
 
 Document loaders bring **external data into LangChain**.
 
-#### Common Loader Types
-- **PDF Loaders** – reports, research papers, manuals
-- **Text Loaders** – `.txt`, logs, notes
-- **Web Loaders** – websites, blogs, documentation
-- **Database Loaders** – SQL / NoSQL data
-- **API Loaders** – internal services, business APIs
+### Common Loader Types
+- **PDF Loaders** – reports, research papers
+- **Text Loaders** – `.txt`, logs
+- **Web Loaders** – websites, documentation
+- **Database Loaders** – SQL / NoSQL
+- **API Loaders** – internal services
 
-> Loaders convert raw data into structured `Document` objects.
+> Loaders convert raw data into `Document` objects.
 
 ---
 
-### 12.5 Text Splitters
+## 14. Text Splitters
 
 Split large documents into **smaller chunks**.
 
 **Why Needed**
 - LLM context window limits
-- Better retrieval accuracy
+- Better semantic retrieval
 
-Chunk size and overlap directly affect RAG quality.
+Chunk size and overlap directly impact RAG quality.
 
 ---
 
-### 12.6 Embeddings
+## 15. Embeddings
 
 Embeddings convert text into **numerical vectors**.
 
@@ -349,42 +339,107 @@ Used for:
 
 ---
 
-### 12.7 Vector Stores
+## 16. Vector Store vs Vector Database (Very Important)
 
-Vector stores store embeddings and enable fast similarity search.
+This distinction is **commonly asked in interviews**.
+
+---
+
+### 16.1 What is a Vector Store?
+
+A **Vector Store** is a **storage + search layer** for embeddings.
+
+It provides:
+- Vector storage
+- Similarity search (cosine, dot product, etc.)
+- Basic metadata filtering
 
 **Examples**
 - FAISS
 - Chroma
-- Pinecone
+- Annoy
 
-They power the **retrieval step** in RAG.
+**Key Characteristics**
+- Lightweight
+- Often runs locally
+- No user management
+- No distributed scaling
+
+> Vector stores are ideal for **local, small-to-medium RAG systems**.
 
 ---
 
-### 12.8 Retrievers
+### 16.2 What is a Vector Database?
+
+A **Vector Database** is a **production-grade system** built around vector storage.
+
+In addition to vector search, it provides:
+- Horizontal scaling
+- High availability
+- Authentication & access control
+- Index management
+- Monitoring and backups
+
+**Examples**
+- Pinecone
+- Weaviate
+- Milvus
+- Qdrant
+
+> Vector databases are designed for **enterprise and production workloads**.
+
+---
+
+### 16.3 Vector Store vs Vector Database (Comparison)
+
+| Feature | Vector Store | Vector Database |
+|------|-------------|----------------|
+| Purpose | Simple similarity search | Enterprise-scale vector search |
+| Deployment | Local / embedded | Cloud / distributed |
+| Scaling | Limited | Horizontal scaling |
+| Security | Minimal | Authentication & RBAC |
+| Monitoring | No | Yes |
+| Use Case | Learning, prototypes | Production RAG systems |
+
+---
+
+### 16.4 How LangChain Uses Them
+
+LangChain:
+- Treats both **vector stores and vector databases the same**
+- Interacts via a **common abstraction**
+- Allows easy swapping without changing pipeline logic
+
+> This abstraction is one of LangChain’s biggest strengths.
+
+---
+
+## 17. Retrievers
 
 Retrievers fetch the **most relevant document chunks**.
 
 **Flow**
 
-They abstract away vector store logic.
+They:
+- Wrap vector store logic
+- Control search strategy
+- Improve relevance
 
 ---
 
-### 12.9 Augmentation (Context Injection)
+## 18. Augmentation (Context Injection)
 
 Retrieved documents are injected into the prompt.
 
 The LLM:
 - Does not memorize data
-- Uses provided context to answer
+- Uses provided context only
 
-> This is the core idea of RAG.
+> This step grounds the response and reduces hallucination.
 
 ---
 
-### 12.10 RAG vs Fine-Tuning
+## 19. RAG vs Fine-Tuning
 
 | RAG | Fine-Tuning |
 |----|------------|
@@ -397,13 +452,13 @@ The LLM:
 
 ---
 
-## 13. When to Use LangChain
+## 20. When to Use LangChain
 
 ### Use LangChain when:
-- You need multi-step LLM logic
+- You need multi-step LLM workflows
 - You want structured outputs
-- You are building AI workflows
-- You need RAG pipelines
+- You are building RAG systems
+- You need orchestration logic
 
 ### Do NOT use LangChain when:
 - A single API call is enough
@@ -411,17 +466,18 @@ The LLM:
 
 ---
 
-## 14. Key Takeaways
+## 21. Key Takeaways
 
 - LangChain orchestrates LLM workflows
 - Runnables are the core abstraction
 - `|` operator is the standard composition method
 - RAG enables LLMs to use private data
+- Vector stores are for local use
+- Vector databases are for production
 - Agents are optional and advanced
-- Start simple, scale only when needed
 
 ---
 
-## 15. Status
+## 22. Status
 
 Learning and revision in progress.
