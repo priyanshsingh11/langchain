@@ -516,4 +516,44 @@ Retrieved chunks are injected into the prompt.
 
 LLM:
 - Does not memorize data
-- A
+- Answers using only provided context
+
+---
+
+## 19. RAG vs Fine-Tuning
+
+| RAG | Fine-Tuning |
+|----|------------|
+| External data | Model weights |
+| Dynamic | Static |
+| Cheap | Expensive |
+| Safer | Risky |
+
+---
+
+## 20. When to Use LangChain
+
+### Use LangChain when:
+- Multi-step LLM workflows
+- RAG pipelines
+- Structured outputs
+
+### Avoid LangChain when:
+- Single API call is enough
+
+---
+
+## 21. Key Takeaways
+
+- LangChain orchestrates LLM workflows
+- Runnables are the core abstraction
+- Text splitters heavily affect RAG quality
+- Vector stores for local use
+- Vector databases for production
+- Agents are optional
+
+---
+
+## 22. Status
+
+Learning and revision in progress.
