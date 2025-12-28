@@ -890,6 +890,287 @@ LLM:
 
 ---
 
-## 22. Status
+## 🔧 Tools in LangChain (Complete & Practical Guide)
 
-Learning and revision in progress.
+**Tools** are a core LangChain concept that allow **LLMs to interact with the outside world** instead of only generating text.
+
+In simple terms:
+> **Tools = Actions the LLM can take**
+
+LangChain tools let a model:
+- Call APIs
+- Query databases
+- Run Python functions
+- Search the web
+- Perform calculations
+- Trigger custom business logic
+
+They are essential for building **real-world, useful AI systems**.
+
+---
+
+## 1. What is a Tool in LangChain?
+
+In **:contentReference[oaicite:0]{index=0}**, a tool is:
+
+> A callable function with a **name, description, and input schema** that an LLM can invoke.
+
+The LLM does **not execute code directly**.  
+Instead, it **decides** when a tool should be used and passes arguments to it.
+
+---
+
+## 2. Why Tools Are Important
+
+Without tools, LLMs:
+- Can only generate text
+- Cannot access real-time data
+- Cannot perform actions
+
+With tools, LLMs can:
+- Fetch live data
+- Perform computations
+- Interact with systems
+- Act like intelligent assistants
+
+> Tools turn LLMs from *chatbots* into *agents*.
+
+---
+
+## 3. Tool vs Runnable (Important Distinction)
+
+| Concept | Purpose |
+|------|--------|
+| Runnable | Execution pipeline (core abstraction) |
+| Tool | External capability callable by LLM |
+
+👉 **Tools are often wrapped and executed via runnables or agents**
+
+---
+
+## 4. Core Components of a Tool
+
+Every tool has:
+
+1. **Name**
+   - What the LLM calls
+2. **Description**
+   - Tells the LLM *when* to use it
+3. **Function**
+   - The actual Python logic
+4. **Input Schema**
+   - Defines expected parameters
+
+> A clear description is more important than the function itself.
+
+---
+
+## 5. Types of Tools in LangChain
+
+LangChain supports multiple categories of tools.
+
+---
+
+### 5.1 Function-Based Tools (Most Common)
+
+Python functions exposed to the LLM.
+
+**Use Cases**
+- Math operations
+- String processing
+- Custom logic
+- Internal services
+
+**Examples**
+- `calculate_tax(amount)`
+- `validate_email(email)`
+- `format_response(text)`
+
+---
+
+### 5.2 API Tools
+
+Tools that call **external APIs**.
+
+**Use Cases**
+- Weather data
+- Stock prices
+- Payment gateways
+- CRM systems
+
+**Key Idea**
+> LLM decides *when* to call the API, your code executes it.
+
+---
+
+### 5.3 Database Tools
+
+Tools that interact with databases.
+
+**Use Cases**
+- Fetch user records
+- Run SQL queries
+- Retrieve analytics
+
+⚠️ Always sanitize inputs and restrict access.
+
+---
+
+### 5.4 Search Tools
+
+Allow LLMs to retrieve information from:
+- Web search
+- Internal search systems
+- Knowledge bases
+
+**Use Cases**
+- Fact-checking
+- News lookup
+- Documentation search
+
+---
+
+### 5.5 Python Tools
+
+Execute Python logic directly.
+
+**Use Cases**
+- Data analysis
+- Calculations
+- File processing
+
+> Powerful but must be sandboxed in production.
+
+---
+
+## 6. How LLMs Decide to Use a Tool
+
+LLMs **do not automatically use tools**.
+
+They rely on:
+- Tool name
+- Tool description
+- Prompt instructions
+
+### Example Prompt Guidance
+
+> Prompt + tool description = correct tool usage
+
+---
+
+## 7. Tools in Agents vs Non-Agent Systems
+
+### Without Agents
+- You manually call tools
+- Deterministic workflows
+- Easier to debug
+
+### With Agents
+- LLM chooses tools autonomously
+- Multi-step reasoning
+- Higher flexibility
+- Higher cost and complexity
+
+> **Use tools without agents whenever possible.**
+
+---
+
+## 8. Tool Calling Flow (Conceptual)
+
+User Input
+↓
+LLM Reasoning
+↓
+Tool Selection
+↓
+Tool Execution
+↓
+Tool Result
+↓
+LLM Final Answer
+The LLM:
+- Does NOT run code
+- Only decides **what to call and with what arguments**
+
+---
+
+## 9. Common Tool Design Mistakes
+
+❌ Vague descriptions  
+❌ Too many tools  
+❌ Overlapping tool functionality  
+❌ Giving tools too much power  
+❌ Letting tools mutate critical data  
+
+> Tools should be **small, focused, and safe**.
+
+---
+
+## 10. Tools + RAG (Very Common Pattern)
+
+In RAG systems, tools are used to:
+- Fetch documents
+- Query vector databases
+- Apply filters
+- Re-rank results
+
+Example:
+- Retriever as a tool
+- Metadata filter as a tool
+
+> Many enterprise RAG systems rely heavily on tools.
+
+---
+
+## 11. Security Best Practices for Tools
+
+- Restrict tool access
+- Validate inputs
+- Avoid unrestricted Python execution
+- Log tool usage
+- Apply rate limits
+
+> Never trust LLM-generated arguments blindly.
+
+---
+
+## 12. When You SHOULD Use Tools
+
+✅ When LLM needs real data  
+✅ When computation is required  
+✅ When side-effects are needed  
+✅ When interacting with systems  
+
+---
+
+## 13. When You SHOULD NOT Use Tools
+
+❌ Simple text generation  
+❌ Static responses  
+❌ One-shot prompts  
+
+> If a single model call works, **don’t over-engineer with tools**.
+
+---
+
+## 14. Interview Tip
+
+**Question:**  
+> Why are tools important in LangChain?
+
+**Answer:**  
+> Tools allow LLMs to interact with external systems, enabling real-world actions such as API calls, database queries, and computations. They transform LLMs from text generators into functional agents.
+
+---
+
+## 15. Key Takeaways
+
+- Tools give LLMs real-world capabilities
+- LLMs decide *when* to use tools
+- Clear descriptions are critical
+- Tools + Runnables > Tools + Agents (for most cases)
+- Security matters more than intelligence
+
+---
+
+📌 **Tools are what make LangChain applications practical, powerful, and production-ready.**
